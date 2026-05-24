@@ -1,9 +1,10 @@
 const express = require("express");
 const morgan = require("morgan");
-const cors = require("cors");
+// const cors = require("cors");
+const baseUrl = "/api/persons";
 
 const app = express();
-app.use(cors());
+// app.use(cors());
 
 let persons = [
   {
@@ -41,8 +42,9 @@ const requestLogger = (request, response, next) => {
   next();
 };
 
-app.use(express.json());
 app.use(requestLogger);
+app.use(express.static("dist"));
+app.use(express.json());
 
 app.get("/", (request, response) => {
   response.send("<h1>Hello World!</h1>");
