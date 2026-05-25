@@ -1,33 +1,12 @@
+require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
 // const cors = require("cors");
 const baseUrl = "/api/persons";
+const Note = require("./src/models/note");
 
 const app = express();
 // app.use(cors());
-
-let persons = [
-  {
-    id: "1",
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: "2",
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: "3",
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: "4",
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
 
 morgan.token("type", function (req, res) {
   return req.headers["content-type"];
@@ -42,89 +21,35 @@ const requestLogger = (request, response, next) => {
   next();
 };
 
+app.use(express.json());
 app.use(requestLogger);
 app.use(express.static("dist"));
-app.use(express.json());
 
 app.get("/", (request, response) => {
-  response.send("<h1>Hello World!</h1>");
+  response.send("<h1>Fullstack course</h1>");
 });
 
-const generateId = () => {
-  // const maxId =
-  //   notes.length > 0 ? Math.max(...notes.map((n) => Number(n.id))) : 0;
-  // return String(maxId + 1);
-  return String(Math.random(100000000000000));
-};
+const personsRouter = require("./src/controllers/persons.js");
 
-// persons
-app.get("/api/persons", (request, response) => {
-  response.json(persons);
-});
-
-app.get("/api/persons/:id", (request, response) => {
-  const id = request.params.id;
-  const person = persons.find((person) => person.id === id);
-  if (person) {
-    response.json(person);
-  } else {
-    response.status(404).end();
-  }
-});
-
-app.delete("/api/persons/:id", (request, response) => {
-  const id = request.params.id;
-  const personIndex = persons.findIndex((person) => person.id === id);
-  if (personIndex) {
-    persons = persons.splice(personIndex, 1);
-    response.json("Delete person successfully!");
-  } else {
-    response.status(404).end();
-  }
-});
-
-app.post("/api/persons", (request, response) => {
-  const content = request.body.content;
-  if (!content) {
-    return response.status(400).json({
-      error: "content missing",
-    });
-  }
-
-  //validate
-  if (!content.name || !content.number) {
-    return response.status(400).json({
-      error: "missing name or number",
-    });
-  }
-
-  const isExistPerson = persons.some((person) => person.name === content.name);
-  if (isExistPerson) {
-    return response.status(400).json({
-      error: "user aleady exist",
-    });
-  }
-  const person = {
-    id: generateId(),
-    ...body.content,
-  };
-  persons = persons.concat(person);
-  response.json(person);
-});
-
-//info
-app.get("/info", (request, response) => {
-  response.send(`<div>
-    <p>Phonebook has info for ${persons.length} people</p>
-    <p>${new Date()}</p>
-    </div>`);
-});
+app.use("/api/persons", personsRouter);
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: "unknown endpoint" });
 };
 
 app.use(unknownEndpoint);
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
