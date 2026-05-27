@@ -1,5 +1,3 @@
-import React from "react";
-
 function Filter({ filter, setFilter }) {
   return (
     <input

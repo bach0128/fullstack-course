@@ -1,0 +1,4 @@
+# flyctl launch added from phonebook/.gitignore
+phonebook/**/node_modules
+fly.toml
+.env
