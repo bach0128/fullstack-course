@@ -1,9 +1,9 @@
 const express = require('express')
-const router = express.Router()
+const personsRouter = express.Router()
 const Person = require('../models/person')
 
 //info
-router.get('/info', async (request, response) => {
+personsRouter.get('/info', async (request, response) => {
   const persons = await Person.find({})
   response.send(`<div>
     <p>Phonebook has info for ${persons.length} people</p>
@@ -12,7 +12,7 @@ router.get('/info', async (request, response) => {
 })
 
 // GET all persons
-router.get('/', async (request, response, next) => {
+personsRouter.get('/', async (request, response, next) => {
   try {
     const name = request.query.name
 
@@ -36,7 +36,7 @@ router.get('/', async (request, response, next) => {
 })
 
 // GET person by id
-router.get('/:id', (request, response) => {
+personsRouter.get('/:id', (request, response) => {
   const id = request.params.id
 
   Person.findById(id).then((person) => {
@@ -45,14 +45,14 @@ router.get('/:id', (request, response) => {
 })
 
 // DELETE person
-router.delete('/:id', (request, response) => {
+personsRouter.delete('/:id', (request, response) => {
   const id = request.params.id
 
   Person.findByIdAndDelete(id).then((person) => response.json(person))
 })
 
 // CREATE person
-router.post('/', async (request, response, next) => {
+personsRouter.post('/', async (request, response, next) => {
   try {
     const body = request.body
 
@@ -93,4 +93,4 @@ router.post('/', async (request, response, next) => {
   }
 })
 
-module.exports = router
+module.exports = personsRouter
