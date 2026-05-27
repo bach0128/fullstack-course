@@ -12,6 +12,12 @@ const getPersons = async (name = "") => {
   return response.data;
 };
 
+// const getPersonById = async (id = "") => {
+//   const response = await axios.get(`/api/persons/${id}`);
+
+//   return response.data;
+// };
+
 const addPerson = async (data) => {
   const response = await axios.post("/api/persons", data);
 

@@ -36,7 +36,7 @@ const App = () => {
       addPerson({ name: newName.trim(), number: newNumber })
         .then(() => handleGetPersons())
         .catch((error) => {
-          console.error();
+          alert(error.response.data.error);
         });
     }
   };
