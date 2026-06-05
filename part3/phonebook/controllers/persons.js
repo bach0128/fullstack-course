@@ -45,10 +45,10 @@ personsRouter.get('/:id', (request, response) => {
 })
 
 // DELETE person
-personsRouter.delete('/:id', (request, response) => {
+personsRouter.delete('/:id', async (request, response) => {
   const id = request.params.id
 
-  Person.findByIdAndDelete(id).then((person) => response.json(person))
+  await Person.findByIdAndDelete(id).then((person) => response.json(person))
 })
 
 // CREATE person
